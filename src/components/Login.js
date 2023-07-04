@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { loginFailed, loginSuccess, requestLogin } from '../redux/action';
 import { connect } from 'react-redux'; 
+import Snackbar from '@mui/material/Snackbar';
 
 
 // TODO remove, this demo shouldn't need to reset the theme.
@@ -27,6 +28,15 @@ function SignIn(props) {
       email: data.get('email'),
       password: data.get('password'),
     });
+    props.requestLogin();
+    setTimeout(()=>{
+      if(data.get("password")==="Ashish@123"){
+        props.loginSuccess({email: data.get('email')})
+      }
+      else{
+        props.loginFailed({email: data.get('email')})
+      }
+    }, 4000)
   };
 
   return (
@@ -72,14 +82,19 @@ function SignIn(props) {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
-            <Button
+            <Button 
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              {props.login.loginLoader? 'Loading...': "Sign In"}
             </Button>
+            <Snackbar
+              open={!!props?.login?.errorMsg || !!props?.login?.successMsg}
+              autoHideDuration={6000}
+              message={ props?.login?.errorMsg || props?.login?.successMsg }
+            />
         </Box>
         </Box>
         
